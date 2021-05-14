@@ -1,13 +1,13 @@
 // 请求模块
 import axios from 'axios'
 import qs from 'qs'
-import { getItem } from '../utils/storage'
+// import { getItem } from '../utils/storage'
 
 const request = axios.create({
-  baseURL: 'http://localhost:8080',
-  headers: {
-    token: ''
-  }
+  baseURL: 'http://localhost:8080'
+  // headers: {
+  //   token: getItem('ZF_USER').token
+  // }
 })
 
 request.qs = qs.stringify
