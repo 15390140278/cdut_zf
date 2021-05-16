@@ -214,8 +214,9 @@
           </div>
         </div>
         <div class="dosomething">
-          <el-button type="primary">现在预定</el-button>
-          <el-button :type="isCollected ? 'warning' : 'primary'" @click="isCollected = !isCollected">{{isCollected ? '取消收藏' : '收藏'}}</el-button>
+          <el-button :type="isCollected ? 'warning':'primary'" @click="IsCollect(isCollected)">{{isCollected ? '取消收藏' : '收藏'}}</el-button>
+          <!-- <el-button v-show="isCollected" type="warning" @click="removeCollection">取消收藏</el-button>
+          <el-button v-show="!isCollected" type="primary" @click="addCollect">收藏该房子</el-button>-->
         </div>
       </div>
     </div>
@@ -264,6 +265,7 @@ import getCommentsRequest from '../../../api/house/getComments'
 import addCommentRequest from '../../../api/house/addComment'
 import CommentItem from './CommentItem'
 import { mapGetters } from 'vuex'
+import { getItem } from '../../../utils/storage.js'
 
 export default {
   components: {
@@ -272,6 +274,7 @@ export default {
   data() {
     return {
       isCollected: false,
+      collectData: [],
       // user: this.$store.state.user,有bug
       id: this.$route.params.id,
       banner: [],
@@ -318,6 +321,9 @@ export default {
     })
   },
   methods: {
+    IsCollect(isCollected) {
+      return isCollected ? this.removeCollection() : this.addCollect()
+    },
     async getHouseDetail() {
       const { data: res } = await houseDetailRequest({
         id: this.id
@@ -348,11 +354,68 @@ export default {
         this.getComment()
         this.comment = ''
       }
+    },
+    zz() {
+      this.flag = !this.flag
+      console.log(this.flag)
+    },
+    async getIsCollection() {
+      const { data: res2 } = await this.$http.get(`collect/getUserCollects?userId=${getItem('ZF_USER').id}`)
+      if (res2.code !== 200) return this.$message.error('获取房屋信息失败！')
+      this.collectData = res2.data.collects
+      console.log(this.collectData)
+    },
+    async addCollect() {
+      if (!this.user) {
+        return this.$message('请先登录')
+      }
+
+      const params = {
+        userId: this.user.id,
+        houseId: this.id
+      }
+      const { data: res } = await this.$http.get(`collect/addCollect`, {
+        params
+      })
+      if (res.code !== 200) {
+        return this.$message.error(res.msg)
+      }
+      this.getIsCollection()
+      this.isCollected = true
+      console.log(this.isCollected)
+      return this.$message.success('收藏成功')
+    },
+    async removeCollection() {
+      let [idArr] = this.collectData.filter(item => item.houseId == this.id)
+      console.log(this.collectData)
+      console.log(idArr)
+      const confirmResult = await this.$confirm('请问是否要取消收藏', '提示', {
+        confirmButtonText: '确认取消',
+        cancelButtonText: '返回',
+        type: 'warning'
+      }).catch(err => err)
+      if (confirmResult !== 'confirm') {
+        return
+      }
+      // 没有取消就是要删除，发送请求完成删除
+      const { data: res } = await this.$http.get(`collect/removeCollect?id=${idArr.id}`)
+      if (res.code !== 200) {
+        return this.$message.error('取消收藏失败')
+      }
+      this.getIsCollection()
+      this.isCollected = false
+      return this.$message.success('取消收藏成功')
     }
   },
-  created() {
+  async created() {
     this.getHouseDetail()
     this.getComment()
+    this.getIsCollection()
+    const { data: res1 } = await this.$http.get(`/collect/hasCollected?userId=${getItem('ZF_USER').id}&houseId=${this.id}`)
+    if (res1.code !== 200) {
+      return this.$message.error('查询出错')
+    }
+    this.isCollected = res1.msg === 'true' ? true : false
   },
   mounted() {
     this.$bus.$on('refresh', _ => {

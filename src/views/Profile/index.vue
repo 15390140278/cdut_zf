@@ -82,15 +82,11 @@
               active-text-color="#ffd04b"
             >
               <el-menu-item index="0" @click="goHome">
-                <span slot="title">
-                  <i class="el-icon-menu"></i>返回主页
-                </span>
+                <span slot="title"> <i class="el-icon-menu"></i>返回主页 </span>
               </el-menu-item>
               <el-submenu index="1">
                 <template slot="title">
-                  <span>
-                    <i class="el-icon-menu"></i>房源信息管理
-                  </span>
+                  <span> <i class="el-icon-menu"></i>房源信息管理 </span>
                 </template>
                 <el-menu-item @click="goRentInfo" index="1-1">
                   <i class="el-icon-menu"></i>我的房子
@@ -98,12 +94,13 @@
                 <el-menu-item @click="publishHouseInfo" index="1-2">
                   <i class="el-icon-menu"></i>提交发布租房申请
                 </el-menu-item>
+                <el-menu-item @click="goCollection" index="1-3">
+                  <i class="el-icon-menu"></i>我的收藏
+                </el-menu-item>
               </el-submenu>
               <el-submenu index="2">
                 <template slot="title">
-                  <span>
-                    <i class="el-icon-menu"></i>用户信息管理
-                  </span>
+                  <span> <i class="el-icon-menu"></i>用户信息管理 </span>
                 </template>
                 <el-menu-item @click="changePassword" index="2-1">
                   <i class="el-icon-menu"></i>修改我的密码
@@ -126,7 +123,7 @@
 import { getItem, removeItem } from '@/utils/storage.js'
 export default {
   inject: ['reload'],
-  created() {
+  created () {
     if (!this.$store.state.user) {
       this.$router.push('login')
     }
@@ -134,19 +131,19 @@ export default {
     // console.log(this.username)
     // console.log(this.avatar)
   },
-  mounted() {
+  mounted () {
     this.$bus.$on('avatarchange', _ => {
       this.reload()
     })
   },
-  data() {
+  data () {
     return {
       username: '',
       avatar: 'http://localhost:8080/img/'
     }
   },
   methods: {
-    async getUser() {
+    async getUser () {
       let id = getItem('ZF_USER').id
       const { data: res } = await this.$http.get('user/selectById', { params: { id: id } })
       if (res.code !== 200) return this.$message.error('获取用户数据失败')
@@ -155,7 +152,7 @@ export default {
       // this.avatar += res.data.faceImage + '?' + new Date().getTime()
       this.avatar += res.data.faceImage
     },
-    handleCommand(command) {
+    handleCommand (command) {
       if (command === 'a') {
         this.$router.push('changepassword')
       } else if (command === 'b') {
@@ -163,26 +160,29 @@ export default {
         this.$router.push('home')
       }
     },
-    goHome() {
+    goHome () {
       this.$router.push('home')
     },
-    goRentInfo() {
+    goRentInfo () {
       this.$router.push('rentinfo')
     },
-    goRentOtherInfo() {
+    goRentOtherInfo () {
       this.$router.push('rentotherinfo')
     },
-    changePassword() {
+    changePassword () {
       this.$router.push('changepassword')
     },
-    changeProfile() {
+    changeProfile () {
       this.$router.push('changeprofile')
     },
-    publishHouseInfo() {
+    publishHouseInfo () {
       this.$router.push('publishhouseinfo')
     },
-    myPublishedInfo() {
+    myPublishedInfo () {
       this.$router.push('mypublishedinfo')
+    },
+    goCollection () {
+      this.$router.push('mycollection')
     }
   }
 }

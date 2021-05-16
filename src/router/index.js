@@ -12,6 +12,7 @@ import RentInfo from '../views/Profile/components/rentInfo.vue'
 import ChangePassword from '../views/Profile/components/changePassword.vue'
 import ChangeProfile from '../views/Profile/components/changeProfile.vue'
 import PublishHouseInfo from '../views/Profile/components/publishHouseInfo.vue'
+import MyCollection from '../views/Profile/components/myCollection.vue'
 
 import BackgroundSystem from '../views/BackgroundSystem/index.vue'
 import Bwelcome from '../views/BackgroundSystem/components/Bwelcome.vue'
@@ -58,7 +59,8 @@ const router = new Router({
         { path: '/rentinfo', component: RentInfo },
         { path: '/changepassword', component: ChangePassword },
         { path: '/changeprofile', component: ChangeProfile },
-        { path: '/publishhouseinfo', component: PublishHouseInfo }
+        { path: '/publishhouseinfo', component: PublishHouseInfo },
+        { path: '/mycollection', component: MyCollection }
       ]
     },
     {
