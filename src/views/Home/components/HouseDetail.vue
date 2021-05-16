@@ -151,6 +151,13 @@
 .addcomment {
   padding: 0 50px;
 }
+.toLogin {
+  height: 60px;
+  padding: 0 50px;
+  span {
+    color: turquoise;
+  }
+}
 </style>
 <template>
   <div class="root">
@@ -238,9 +245,15 @@
           <CommentItem :key="item.id" :comment="item"></CommentItem>
         </template>
       </div>
-      <div class="addcomment">
+      <div class="addcomment" v-if="user">
         <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="comment"></el-input>
         <el-button @click="addComment">发表评论</el-button>
+      </div>
+      <div class="toLogin" v-else>
+        <p>
+          <span @click="$router.push('login')">登录</span>
+          可以发表评论
+        </p>
       </div>
     </div>
   </div>
@@ -250,16 +263,16 @@ import houseDetailRequest from '../../../api/house/houseDetailRequest'
 import getCommentsRequest from '../../../api/house/getComments'
 import addCommentRequest from '../../../api/house/addComment'
 import CommentItem from './CommentItem'
+import { mapGetters } from 'vuex'
 
 export default {
-  inject: ['reload'],
   components: {
     CommentItem
   },
   data() {
     return {
       isCollected: false,
-      uid: this.$store.state.user.id,
+      // user: this.$store.state.user,有bug
       id: this.$route.params.id,
       banner: [],
       houseDetail: {},
@@ -299,6 +312,11 @@ export default {
       comment: ''
     }
   },
+  computed: {
+    ...mapGetters({
+      user: 'user'
+    })
+  },
   methods: {
     async getHouseDetail() {
       const { data: res } = await houseDetailRequest({
@@ -321,7 +339,7 @@ export default {
     },
     async addComment() {
       const { data: res } = await addCommentRequest({
-        userId: this.uid,
+        userId: this.user.id,
         houseId: this.id,
         content: this.comment
       })
@@ -337,7 +355,6 @@ export default {
     this.getComment()
   },
   mounted() {
-    this.isRefresh = true
     this.$bus.$on('refresh', _ => {
       this.getComment()
     })

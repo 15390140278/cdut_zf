@@ -3,12 +3,13 @@
     <p>{{comment.content}}</p>
     <span>时间：{{comment.date}}| 用户{{comment.userId}}</span>
     <!-- 用户可以删除自己的评论 -->
-    <el-button v-if="uid === comment.userId" type="primary" @click="removeDialog">删除</el-button>
+    <el-button v-if="user && user.id == comment.userId" type="primary" @click="removeDialog">删除</el-button>
   </div>
 </template>
 
 <script>
 import removeCommentRequest from '../../../api/house/removeComment'
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -18,9 +19,12 @@ export default {
   },
   name: '',
   data() {
-    return {
-      uid: this.$store.state.user.id
-    }
+    return {}
+  },
+  computed: {
+    ...mapGetters({
+      user: 'user'
+    })
   },
   methods: {
     async removeDialog() {

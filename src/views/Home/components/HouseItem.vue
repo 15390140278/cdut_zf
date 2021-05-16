@@ -129,13 +129,10 @@
 </template>
 <script>
 export default {
-  // props: ['houseItem'],
   props: {
     houseItem: {
       type: Object,
-      default: () => {
-        return null
-      }
+      default: () => {}
     }
   },
   data() {

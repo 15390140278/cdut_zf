@@ -25,6 +25,11 @@ const store = new Vuex.Store({
     }
   },
   actions: {},
+  getters: {
+    user(state) {
+      return state.user
+    }
+  },
   modules: {}
 })
 

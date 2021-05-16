@@ -14,9 +14,9 @@ request.qs = qs.stringify
 
 // request.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
-// request.interceptors.request.use(config => {
-//   config.data = JSON.parse(config.data)
-//   return config
-// })
+request.interceptors.request.use(config => {
+  console.log(config)
+  return config
+})
 
 export default request
